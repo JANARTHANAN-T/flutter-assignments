@@ -2,7 +2,6 @@ import "package:http/http.dart" as http;
 import 'package:flutter/material.dart';
 import 'dart:convert';
 
-
 class WeatherPrediction extends StatefulWidget {
   const WeatherPrediction({super.key});
   @override
@@ -21,9 +20,12 @@ class _WeatherPredictionState extends State<WeatherPrediction> {
   var humidity;
   var wind_speed;
 
-   var enteredCity="Chennai";
-  String URL ="http://api.weatherapi.com/v1/current.json?key=8868e7d431964dd89a265801230604&q="+"Chennai"+"&aqi=no";
+  var enteredCity = "";
   Future getweather() async {
+  String URL =
+      "http://api.weatherapi.com/v1/current.json?key=8868e7d431964dd89a265801230604&q=" +
+          enteredCity+
+          "&aqi=no";
     http.Response response = await http.get(Uri.parse(URL));
     var result = jsonDecode(response.body);
 
@@ -42,6 +44,9 @@ class _WeatherPredictionState extends State<WeatherPrediction> {
   void initState() {
     // TODO: implement initState
     super.initState();
+    setState(() {
+      enteredCity="Salem";
+    });
     this.getweather();
   }
 
@@ -59,7 +64,8 @@ class _WeatherPredictionState extends State<WeatherPrediction> {
               width: MediaQuery.of(context).size.width,
               decoration: new BoxDecoration(
                   image: new DecorationImage(
-                      image: new AssetImage("assets/sky.jpg"), fit: BoxFit.cover)),
+                      image: new AssetImage("assets/sky.jpg"),
+                      fit: BoxFit.cover)),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
@@ -89,7 +95,7 @@ class _WeatherPredictionState extends State<WeatherPrediction> {
               child: ListView(
                 children: [
                   ListTile(
-                    leading: Image.asset('assets/temperature.jpg',height: 30),
+                    leading: Image.asset('assets/temperature.jpg', height: 30),
                     title: Text("Temperature"),
                     trailing: Text(this.temperature.toString() + "\u00B0C"),
                   ),
@@ -117,38 +123,40 @@ class _WeatherPredictionState extends State<WeatherPrediction> {
             Form(
                 key: _formkey,
                 child: Padding(
-                  padding: EdgeInsets.fromLTRB(30,10,30,10),
-                  child:TextFormField(
-                  controller: inputCity,
-                  keyboardType: TextInputType.text,
-                  decoration: const InputDecoration(
-                      hintText: "Enter City Name",
-                      labelText: "Enter City Name",
-                      border: OutlineInputBorder()),
-                  validator: (val) {
-                    if (val!.isEmpty) {
-                      return "Must have enter city name";
-                    }
-                  },
-                ))),
-           
-               ElevatedButton(
-                    onPressed: () {
-                      if (!_formkey.currentState!.validate()) {
-                        return;
-                      }
-                      var input = inputCity.text;
+                    padding: EdgeInsets.fromLTRB(30, 10, 30, 10),
+                    child: TextFormField(
+                      controller: inputCity,
+                      keyboardType: TextInputType.text,
+                      decoration: const InputDecoration(
+                          hintText: "Enter City Name",
+                          labelText: "Enter City Name",
+                          border: OutlineInputBorder()),
+                      validator: (val) {
+                        if (val!.isEmpty) {
+                          return "Must have enter city name";
+                        }
+                      },
+                    ))),
+            ElevatedButton(
+                onPressed: () {
+                  if (!_formkey.currentState!.validate()) {
+                    return;
+                  }
+                  var input = inputCity.text;
+
+                  setState(() {
+                    enteredCity = input.toString();
                     
-                      setState(() {
-                        enteredCity = inputCity.toString();
-                      });
-                    },
-                    style: OutlinedButton.styleFrom(
-                        padding: const EdgeInsets.fromLTRB(20, 20, 20, 20)),
-                    child: Text("Get Weather")),
-                    SizedBox(
-                      height: 10,
-                    )
+                  });
+
+                  getweather();
+                },
+                style: ElevatedButton.styleFrom(
+                    padding: const EdgeInsets.fromLTRB(20, 20, 20, 20)),
+                child: Text("Get Weather")),
+            SizedBox(
+              height: 10,
+            )
           ],
         ));
   }
